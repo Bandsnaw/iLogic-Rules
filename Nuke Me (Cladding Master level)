@@ -1,0 +1,31 @@
+'die
+oDef = ThisDoc.Document.ComponentDefinition
+Dim oUsers As UserParameters = oDef.Parameters.UserParameters
+Dim oFeature As PartFeature
+
+
+For Each oFeature In oDef.Features
+	If oFeature.Name.Contains("ElecBox") Then
+		oFeature.Delete
+	End If
+	
+	If Side_of_Wall = "FRONT" Then
+		PFace = "F"
+	Else If Side_of_Wall = "BACK" Then
+		PFace = "B"
+	End If
+	
+	Dim WallTag As String = (Wall & "_")
+	For Each uParam As Parameter In oUsers
+		If uParam.Name.Contains("ElecBox") And uParam.Name.Contains(WallTag) And Not uParam.InUse Then
+			uParam.Delete
+		End If
+	Next
+Next
+
+ElecBoxCount = 0
+ElecBoxAFF = 500
+ElecBoxCL = 200
+ElecBoxGang = "1 Gang - N.A."
+
+InventorVb.DocumentUpdate()
