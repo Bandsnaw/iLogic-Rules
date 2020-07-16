@@ -1,0 +1,47 @@
+Dim oDef As AssemblyComponentDefinition = ThisDoc.Document.ComponentDefinition
+Dim oOcc As ComponentOccurrence
+
+'Bravo Six, going dark
+Try
+	TacticalNuke = "C:\_Vault\Designs\PD\Ben's Testing\Ben, but Testing\tacn.mp3"
+	player = CreateObject("MediaPlayer.MediaPlayer.1")
+	player.FileName = TacticalNuke
+Catch
+End Try
+
+GoNoGo = MessageBox.Show("Are you sure you want to do this?", "Launching Nuke", MessageBoxButtons.OKCancel)
+If GoNoGo = vbOK Then
+	'Iterate from section 1 to end section
+	For nx = 1 To Qty_Studs - 1
+		If nx < 10 Then
+			oSectionNumber = "0" & nx
+		Else
+			oSectionNumber = nx
+		End If
+		
+		'Assign seciton name variable then fire rules in section
+		oSectName = (Wall & "-" & oSectionNumber)
+		For Each oOcc In oDef.Occurrences
+			If oOcc.Name = oSectName Then
+				iLogicVb.RunRule(oSectName, "Clear All Custom Horz")
+				iLogicVb.RunRule(oSectName, "Clear All Custom Horz")
+				iLogicVb.RunRule(oSectName, "Standard Config")
+				InventorVb.DocumentUpdate()
+			Else If oOcc.Name.Contains(oSectName & ("B") & ":") AndAlso oOcc.Name.Contains("StudSide") Then
+				oOcc.Delete()
+			Else If oOcc.Name.Contains(oSectName & ("F") & ":") AndAlso oOcc.Name.Contains("StudSide") Then
+				oOcc.Delete()
+			Else If oOcc.Name.Contains(oSectName & "F" & ":") AndAlso Not oOcc.Name.Contains("StudSide") Then
+				oPanelName = (ProjectNumber & "_" & oOcc.Name.Replace(":", "_") & ":1")
+				iLogicVb.RunRule(MakePath(oOcc.Name, oPanelName), "Nuke me")
+			Else If oOcc.Name.Contains(oSectName & "B" & ":") AndAlso Not oOcc.Name.Contains("StudSide") Then
+				oPanelName = (ProjectNumber & "_" & oOcc.Name.Replace(":", "_") & ":1")
+				iLogicVb.RunRule(MakePath(oOcc.Name, oPanelName), "Nuke me")
+			Else If oOcc.Name.Contains("Cladding Master") Then
+				iLogicVb.RunRule(oOcc.Name, "Nuke me")
+			End If
+		Next
+	Next
+Else If GoNoGo = vbCancel Then
+	Exit Sub
+End If
